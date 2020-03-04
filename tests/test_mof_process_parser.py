@@ -1,0 +1,40 @@
+# -*- coding: utf-8 -*-
+
+import unittest
+
+from etl.parsers.kernel import Process_Terminate_TypeGroup1, Process_V4_TypeGroup1
+from etl.parsers.kernel.core import build_mof
+from etl.parsers.kernel.process import ImageLoad
+from etl.wmi import EventTraceGroup
+
+
+class TestMofProcessParser(unittest.TestCase):
+    def test_image_load(self):
+        payload = b'\x00\x00?\x87\x03\xf8\xff\xff\x00\xa0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xf9]\x01\x00\xef\xa4\xef]\x04\x01\x00\x00\x00\x00?\x87\x03\xf8\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\\\x00D\x00e\x00v\x00i\x00c\x00e\x00\\\x00H\x00a\x00r\x00d\x00d\x00i\x00s\x00k\x00V\x00o\x00l\x00u\x00m\x00e\x004\x00\\\x00W\x00i\x00n\x00d\x00o\x00w\x00s\x00\\\x00S\x00y\x00s\x00t\x00e\x00m\x003\x002\x00\\\x00d\x00r\x00i\x00v\x00e\x00r\x00s\x00\\\x00w\x00i\x00n\x00t\x00u\x00n\x00.\x00s\x00y\x00s\x00\x00\x00'
+        mof = build_mof(EventTraceGroup.EVENT_TRACE_GROUP_PROCESS, 3, 10, payload)
+        self.assertIsInstance(mof, ImageLoad)
+        self.assertEqual(mof.get_process_id(), 0)
+        self.assertEqual(mof.get_image_filename(), "\\Device\\HarddiskVolume4\\Windows\\System32\\drivers\\wintun.sys")
+
+    def test_process_terminate(self):
+        payload = b'\xdc\x01\x00\x00'
+        mof = build_mof(EventTraceGroup.EVENT_TRACE_GROUP_PROCESS, 2, 11, payload)
+        self.assertIsInstance(mof, Process_Terminate_TypeGroup1)
+        self.assertEqual(mof.get_process_id(), 476)
+
+    def test_process_v4_type_group1_type1(self):
+        payload = b'\x800\xa9\x98\x0b\xa5\xff\xff\x1c\x02\x00\x00\xcc\x01\x00\x00\x00\x00\x00\x00\x03\x01\x00\x00\x00po\n\x04\x00\x00\x00\x04\x00\x00\x00\xd0\x19\xeb\x0f\x8b\x8d\xff\xff\x00\x00\x00\x00\x03\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x12\x00\x00\x00smss.exe\x00\\\x00S\x00y\x00s\x00t\x00e\x00m\x00R\x00o\x00o\x00t\x00\\\x00S\x00y\x00s\x00t\x00e\x00m\x003\x002\x00\\\x00s\x00m\x00s\x00s\x00.\x00e\x00x\x00e\x00 \x000\x000\x000\x000\x000\x000\x00e\x004\x00 \x000\x000\x000\x000\x000\x000\x008\x004\x00 \x00\x00\x00\x00\x00\x00\x00'
+        mof = build_mof(EventTraceGroup.EVENT_TRACE_GROUP_PROCESS, 4, 1, payload)
+        self.assertIsInstance(mof, Process_V4_TypeGroup1)
+        self.assertEqual(mof.get_process_id(), 540)
+        self.assertEqual(mof.get_command_line(), '\\SystemRoot\\System32\\smss.exe 000000e4 00000084 ')
+        self.assertEqual(mof.get_image_file_name(), 'smss.exe')
+
+    def test_process_v4_type_group1_type2(self):
+        payload = b'\x80 \xa6\x98\x0b\xa5\xff\xff\xdc\x01\x00\x00\xcc\x01\x00\x00\xff\xff\xff\xff\x00\x00\x00\x00\x00\xe0r\x95\x04\x00\x00\x00\x00\x00\x00\x00\xd0x\x91\x10\x8b\x8d\xff\xff\x00\x00\x00\x00F\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x05\x12\x00\x00\x00autochk.exe\x00\\\x00?\x00?\x00\\\x00C\x00:\x00\\\x00W\x00i\x00n\x00d\x00o\x00w\x00s\x00\\\x00s\x00y\x00s\x00t\x00e\x00m\x003\x002\x00\\\x00a\x00u\x00t\x00o\x00c\x00h\x00k\x00.\x00e\x00x\x00e\x00 \x00*\x00\x00\x00\x00\x00\x00\x00'
+        mof = build_mof(EventTraceGroup.EVENT_TRACE_GROUP_PROCESS, 4, 2, payload)
+        self.assertIsInstance(mof, Process_V4_TypeGroup1)
+        self.assertEqual(mof.get_process_id(), 476)
+        self.assertEqual(mof.get_command_line(), '\\??\\C:\\Windows\\system32\\autochk.exe *')
+        self.assertEqual(mof.get_image_file_name(), 'autochk.exe')
+
