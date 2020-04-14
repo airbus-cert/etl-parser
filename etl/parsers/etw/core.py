@@ -34,7 +34,7 @@ class Guid:
         return not (self == other)
 
     def __str__(self):
-        return "%x-%x-%x-%s-%s" % (self.data1, self.data2, self.data3, "".join(["%x"%x for x in self.data4[0:2]]), "".join(["%x"%x for x in self.data4[2:]]))
+        return "%x-%x-%x-%s-%s" % (self.data1, self.data2, self.data3, "".join(["%02x"%x for x in self.data4[0:2]]), "".join(["%02x"%x for x in self.data4[2:]]))
 
 
 def guid(guid_str: str) -> Guid:
