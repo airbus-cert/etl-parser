@@ -56,6 +56,7 @@ class EtlFileLogger(IEtlFileObserver):
 
     def on_event_record(self, event: Event):
         """ETW event this is what you search"""
+        # Choose the "parse_" function which corresponds to your event
         message = event.parse_tracelogging() # Invoke TraceLogging parser
         message = event.parse_etw() # Invoke Manifest based parser
 
@@ -63,7 +64,7 @@ class EtlFileLogger(IEtlFileObserver):
         """unknown"""
         etw = event.parse_etw()
 
-with open("example.etl") as etl_file:
+with open("example.etl", "rb") as etl_file:
     etl_reader = build_from_stream(etl_file.read())
     etl_reader.parse(EtlFileLogger())
 ```
