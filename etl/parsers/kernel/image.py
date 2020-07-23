@@ -62,7 +62,7 @@ class ImageLoad(Mof):
         """
         :return: Return image file name
         """
-        return bytearray(self.source.FileName[:-2]).decode("utf-16le")
+        return bytearray(self.source.FileName.string[:-2]).decode("utf-16le")
 
     def get_process_id(self) -> int:
         """

@@ -41,13 +41,13 @@ class EventTraceHeader(Mof):
         """
         :return: ETW Session name
         """
-        return bytearray(self.source.SessionNameString[:-2]).decode("utf-16le")
+        return bytearray(self.source.SessionNameString.string[:-2]).decode("utf-16le")
 
     def get_log_filename(self) -> str:
         """
         :return: Return path of log file name
         """
-        return bytearray(self.source.LogFileNameString[:-2]).decode("utf-16le")
+        return bytearray(self.source.LogFileNameString.string[:-2]).decode("utf-16le")
 
 
 @declare(group=EventTraceGroup.EVENT_TRACE_GROUP_HEADER, version=2, event_types=[5, 32])

@@ -11,10 +11,13 @@ from construct import Struct, Int32sl, Int16sl, Byte, Enum, Check, EnumInteger, 
 Global Unique Identifier
 """
 Guid = Struct(
-    "data1" / Int32ul,
-    "data2" / Int16ul,
-    "data3" / Int16ul,
-    "data4" / Byte[8]
+    "type" / Computed("Guid"),
+    "inner" / Struct (
+        "data1" / Int32ul,
+        "data2" / Int16ul,
+        "data3" / Int16ul,
+        "data4" / Byte[8]
+    )
 )
 
 """

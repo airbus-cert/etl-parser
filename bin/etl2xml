@@ -9,6 +9,7 @@ from construct import ListContainer, Struct, Container
 from etl.error import GroupNotFound, VersionNotFound, EventTypeNotFound, EtwVersionNotFound, EventIdNotFound, \
     GuidNotFound, TlMetaDataNotFound, InvalidType
 from etl.etl import IEtlFileObserver, build_from_stream
+from etl.parsers.etw.core import Guid
 from etl.wintrace import WinTrace
 from etl.event import Event
 from etl.parsers.kernel import FileIo_V2_Name, ImageLoad, DiskIo_TypeGroup1, \
@@ -122,7 +123,7 @@ def log_construct_pattern(xml: Element, pattern: Struct, source: Container):
                 raise InvalidType()
         elif isinstance(source[field.name], ListContainer):
             add_attribute(xml, field.name, bytearray(source[field.name]).hex())
-        elif isinstance(source[field.name], bytes):
+        elif isinstance(source[field.name],  bytes):
             add_attribute(xml, field.name, source[field.name].hex())
         elif isinstance(source[field.name], Container):
             continue
@@ -137,8 +138,11 @@ def log_tracelogging(obj: TraceLogging) -> Element:
     """
     xml = ElementTree.Element("tracelogging")
     xml.set("name", obj.get_name())
-    for k,v in obj.items():
-        add_attribute(xml, k, str(v))
+    for k, v in obj.items():
+        if hasattr(v, "type") and v.type == "Guid":
+            add_attribute(xml, k, str(Guid(v.inner.data1, v.inner.data2, v.inner.data3, v.inner.data4)))
+        else:
+            add_attribute(xml, k, str(v))
     return xml
 
 

@@ -33,25 +33,25 @@ class Process_V3_TypeGroup1(Mof):
         """
         :return: Image file name
         """
-        return bytearray(self.source.ImageFileName[:-1]).decode("utf8")
+        return bytearray(self.source.ImageFileName.string[:-1]).decode("utf8")
 
     def get_command_line(self) -> str:
         """
         :return: Associate command line of starting process
         """
-        return bytearray(self.source.CommandLine[:-2]).decode("utf-16le")
+        return bytearray(self.source.CommandLine.string[:-2]).decode("utf-16le")
 
     def get_package_full_name(self) -> str:
         """
         :return: Package full name
         """
-        return bytearray(self.source.PackageFullName[:-2]).decode("utf-16le")
+        return bytearray(self.source.PackageFullName.string[:-2]).decode("utf-16le")
 
     def get_application_id(self) -> str:
         """
         :return: Application id
         """
-        return bytearray(self.source.PackageFullName[:-2]).decode("utf-16le")
+        return bytearray(self.source.PackageFullName.string[:-2]).decode("utf-16le")
 
     def get_exit_status(self) -> int:
         """
@@ -102,25 +102,25 @@ class Process_V4_TypeGroup1(Mof):
         """
         :return: Image file name
         """
-        return bytearray(self.source.ImageFileName[:-1]).decode("utf8")
+        return bytearray(self.source.ImageFileName.string[:-1]).decode("utf8")
 
     def get_command_line(self) -> str:
         """
         :return: Associate command line of starting process
         """
-        return bytearray(self.source.CommandLine[:-2]).decode("utf-16le")
+        return bytearray(self.source.CommandLine.string[:-2]).decode("utf-16le")
 
     def get_package_full_name(self) -> str:
         """
         :return: Package full name
         """
-        return bytearray(self.source.PackageFullName[:-2]).decode("utf-16le")
+        return bytearray(self.source.PackageFullName.string[:-2]).decode("utf-16le")
 
     def get_application_id(self) -> str:
         """
         :return: Application id
         """
-        return bytearray(self.source.PackageFullName[:-2]).decode("utf-16le")
+        return bytearray(self.source.PackageFullName.string[:-2]).decode("utf-16le")
 
     def get_exit_status(self) -> int:
         """
@@ -181,7 +181,7 @@ class ImageLoad(Mof):
         """
         :return: Return image file name
         """
-        return bytearray(self.source.FileName[:-2]).decode("utf-16le")
+        return bytearray(self.source.FileName.string[:-2]).decode("utf-16le")
 
     def get_process_id(self) -> int:
         """
