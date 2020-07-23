@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name="etl-parser",
-    version="1.0.0",
+    version="1.0.1",
     description="Event Trace Log file parser in pure Python",
     long_description="""`etl-parser` is a pure python 3 parser library for `ETL` Windows log files. `ETL` is the default format for [ETW](https://docs.microsoft.com/en-us/windows/win32/etw/event-tracing-portal).
 But It's also the default format for the Kernel logger.
