@@ -11,7 +11,7 @@ import struct
 from enum import Enum
 from io import BytesIO
 
-from construct import Int16ul, Int8ul, CString, If, GreedyRange, LazyBound, Struct
+from construct import Int16ul, Int8ul, CString, If, GreedyRange, LazyBound, Struct, Int32ul
 from etl.error import TlMetaDataNotFound, TlUnhandledTag
 from etl.utils import Guid, SystemTime
 
@@ -52,12 +52,14 @@ class TagIn(Enum):
 TlMetaDataField = Struct(
     "name" / CString("ascii"),
     "tag_in" / Int8ul,
-    "tag_out" / If(lambda this: this.tag_in & TagIn.CHAIN.value, LazyBound(lambda: Int8ul))
+    "tag_out" / If(lambda this: this.tag_in & TagIn.CHAIN.value, LazyBound(lambda: Int8ul)),
+    "unknown" / If(lambda this: this.tag_out and bool(this.tag_out & 0x80), LazyBound(lambda: Int32ul))
 )
 
 TlMetaData = Struct(
     "size" / Int16ul,
     "tag" / Int8ul,
+    "unknown" / If(lambda this: this.tag & 0x80, LazyBound(lambda: Int8ul)),
     "name" / CString("ascii"),
     "fields" / GreedyRange(TlMetaDataField)
 )
@@ -95,6 +97,10 @@ def read_field(stream, tag):
             current.append(stream.read_exact(1))
         # Encode in ascii and ignore last null byte
         return b"".join(current).decode("ascii")[:-1]
+
+    elif tag & 0x1f == TagIn.COUNTEDANSISTRING.value:
+        length = struct.unpack("b", stream.read_exact(1))[0]
+        return stream.read_exact(length + 1).decode("ascii")
 
     elif tag & 0x1f == TagIn.INT8.value:
         return struct.unpack("b", stream.read_exact(1))[0]

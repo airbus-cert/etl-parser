@@ -75,7 +75,7 @@ class TraceloggingParser(unittest.TestCase):
         tl = build_tracelogging(event)
         self.assertEqual(tl.get_name(), "Test", "Invalid Name")
         parsed_guid = tl["Engine"]
-        self.assertEqual(Guid(parsed_guid.data1, parsed_guid.data2, parsed_guid.data3, parsed_guid.data4), guid("00000000-0000-0000-0000-000000000000"), "Invalid GUID")
+        self.assertEqual(Guid(parsed_guid.inner.data1, parsed_guid.inner.data2, parsed_guid.inner.data3, parsed_guid.inner.data4), guid("00000000-0000-0000-0000-000000000000"), "Invalid GUID")
 
     def test_array_uint8(self):
         """
@@ -99,6 +99,20 @@ class TraceloggingParser(unittest.TestCase):
         meta = Container()
         meta.ext_type = 11
         meta.data_item = b'\x10\x00\x00Test\x00Engine\x00\x26'
+        event.extended_data = ListContainer([meta])
+        event.user_data = b'\x10\x00' + b'\x00' * 32
+        tl = build_tracelogging(event)
+        self.assertEqual(tl.get_name(), "Test", "Invalid Name")
+        self.assertEqual(tl["Engine"], [0] * 16)
+
+    def test_extended_flag(self):
+        """
+        Test the deserialization of an array UINT16 element
+        """
+        event = Container()
+        meta = Container()
+        meta.ext_type = 11
+        meta.data_item = b'\x10\x00\x80\x00Test\x00Engine\x00\x26'
         event.extended_data = ListContainer([meta])
         event.user_data = b'\x10\x00' + b'\x00' * 32
         tl = build_tracelogging(event)

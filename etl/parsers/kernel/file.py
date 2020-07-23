@@ -24,4 +24,4 @@ class FileIo_V2_Name(Mof):
         """
         :return: Associate filename
         """
-        return bytearray(self.source.FileName[:-2]).decode("utf-16le")
+        return bytearray(self.source.FileName.string[:-2]).decode("utf-16le")
