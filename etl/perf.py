@@ -44,7 +44,7 @@ class PerfInfo:
         """
         return (
                 datetime(1601, 1, 1, tzinfo=timezone.utc)
-                + timedelta(microseconds=(boot_time + self.source.event_header.timestamp)/10)
+                + timedelta(microseconds=(boot_time + self.source.timestamp)/10)
         ).isoformat(timespec="microseconds")
 
     def get_mof(self) -> Mof:
