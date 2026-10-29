@@ -99,8 +99,8 @@ def read_field(stream, tag):
         return b"".join(current).decode("ascii")[:-1]
 
     elif tag & 0x1f == TagIn.COUNTEDANSISTRING.value:
-        length = struct.unpack("b", stream.read_exact(1))[0]
-        return stream.read_exact(length + 1).decode("ascii")
+        length = struct.unpack("H", stream.read_exact(2))[0]
+        return stream.read_exact(length).decode("ascii")
 
     elif tag & 0x1f == TagIn.INT8.value:
         return struct.unpack("b", stream.read_exact(1))[0]
